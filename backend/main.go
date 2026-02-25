@@ -51,21 +51,38 @@ func getURL(id string) (URL, error) {
 	return url, nil
 }
 
+func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Max-Age", "3600")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next(w, r)
+	}
+}
+
 func RootPageURL(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, world!")
 }
 
 func ShortURLHandler(w http.ResponseWriter, r *http.Request) {
-	var data struct {
-		URL string `json:"url"`
-	}
-	err := json.NewDecoder(r.Body).Decode(&data)
-	if err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
-	}
+	// var data struct {
+	// 	URL string `json:"url"`
+	// }
+	// err := json.NewDecoder(r.Body).Decode(&data)
+	// if err != nil {
+	// 	http.Error(w, "Invalid request body", http.StatusBadRequest)
+	// 	return
+	// }
+	URL := r.URL.Query().Get("url")
 
-	shortURL_ := createURL(data.URL)
+	shortURL_ := createURL(URL)
 	// fmt.Fprintf(w, shortURL)
 	response := struct {
 		ShortURL string `json:"short_url"`
@@ -88,13 +105,13 @@ func main() {
 	OriginalURL := "https://leetcode.com/u/SHUBHANSHU_GUPTA-156/"
 	createURL(OriginalURL)
 	// ShortURL = 287d2e56
-	// http.//localhost:3000/redirect/287d2e56 
+	// http.//localhost:3000/redirect/287d2e56
 	// working correctly but not showing in postman
-	http.HandleFunc("/", RootPageURL)
-	http.HandleFunc("/shorten", ShortURLHandler)
-	http.HandleFunc("/redirect/", redirectURLHandler)
+	http.HandleFunc("/", corsMiddleware(RootPageURL))
+	http.HandleFunc("/shorten", corsMiddleware(ShortURLHandler))
+	http.HandleFunc("/redirect/", corsMiddleware(redirectURLHandler))
 	fmt.Println("Starting server on port 3000...")
-	err := http.ListenAndServe(":3000", nil)
+	err := http.ListenAndServe("localhost:3000", nil)
 	if err != nil {
 		fmt.Println("Error on starting server:", err)
 	}
