@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react"
-
+const URLPrefix = "http://localhost:3000/redirect/";
 const LinkResult = ({ inputValue }) => {
   const [shortenLink, setShortenLink] = useState("");
   const [copied, setCopied] = useState(false);
@@ -54,7 +54,7 @@ const LinkResult = ({ inputValue }) => {
             className={copied ? "copied" : ""}
             onClick={async () => {
               try {
-                await navigator.clipboard.writeText(shortenLink);
+                await navigator.clipboard.writeText(URLPrefix + shortenLink);
                 setCopied(true);
               } catch (err) {
                 console.error("Failed to copy:", err);
