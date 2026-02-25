@@ -102,8 +102,8 @@ func redirectURLHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	OriginalURL := "https://leetcode.com/u/SHUBHANSHU_GUPTA-156/"
-	createURL(OriginalURL)
+	// OriginalURL := "https://leetcode.com/u/SHUBHANSHU_GUPTA-156/"
+	// createURL(OriginalURL)
 	// ShortURL = 287d2e56
 	// http.//localhost:3000/redirect/287d2e56
 	// working correctly but not showing in postman
