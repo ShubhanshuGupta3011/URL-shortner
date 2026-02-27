@@ -18,7 +18,14 @@ const InputShortener = ({ setInputValue }) => {
           value={value}
           onChange={e => setValue(e.target.value)}  
         />
-        <button onClick={handleClick}>shorten</button>
+        <button 
+        disabled={!value.length}
+        style={{
+          ...!value.length && { cursor: "not-allowed", opacity: 0.5 }
+        }}
+        onClick={handleClick}>
+          shorten
+        </button>
       </div>
     </div>
   )
